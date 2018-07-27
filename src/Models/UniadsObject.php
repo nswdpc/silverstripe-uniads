@@ -25,6 +25,11 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\View\Requirements;
 use SilverStripe\Core\Convert;
 use SilverStripe\Control\HTTP;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use DateTime;
 use Page;
 
@@ -88,6 +93,7 @@ class UniadsObject extends DataObject {
      */
     private static $has_many = [
         'ImpressionRecords' => UniadsImpression::class,
+        'Reports' => UniadsReport::class,
     ];
 
     private static $defaults = [
@@ -109,6 +115,15 @@ class UniadsObject extends DataObject {
         'Zone.Title' => 'Zone',
         'Impressions' => 'Impressions',
         'Clicks' => 'Clicks',
+    ];
+
+    private static $indexes = [
+        'Active' => true,
+        'Weight' => true,
+        'ImpressionLimit' => true,
+        'Impressions' => true,
+        'Clicks' => true,
+        'DateLimit' => [ 'type' => 'index', 'value' => '"Starts","Expires"'],
     ];
 
 
@@ -163,6 +178,24 @@ class UniadsObject extends DataObject {
 
             $content->setRows(10);
             $content->setColumns(20);
+        }
+
+        if($this->exists()) {
+            // for each type, add a tab for the grid field
+            $types = [
+                UniAdsReport::IMPRESSION,
+                UniAdsReport::CLICK,
+            ];
+            foreach($types as $type) {
+                $config = GridFieldConfig_RecordEditor::create();
+                $list = $this->owner->Reports()->filter('Type', $type)->sort('Created DESC');
+                $name = 'Reports'. $type;
+                $gf = GridField::create($name, $type .  ' - report', $list, $config);
+                $config->removeComponentsByType( GridFieldAddNewButton::class );
+                $config->removeComponentsByType( GridFieldAddExistingAutocompleter::class );
+                $config->addComponent(new GridFieldExportButton());
+                $fields->addFieldToTab('Root.' . $type . 'Report', $gf);
+            }
         }
 
         $this->extend('updateCMSFields', $fields);

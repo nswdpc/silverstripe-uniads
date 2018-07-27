@@ -51,6 +51,11 @@ class UniadsCampaign extends DataObject {
         'Client' => UniadsClient::class,
     ];
 
+    private static $indexes = [
+        'Active' => [ 'type' => 'index', 'value' => 'Active'],
+        'DateLimit' => [ 'type' => 'index', 'value' => '"Starts","Expires"'],
+    ];
+
     public function getCMSFields() {
         $fields = parent::getCMSFields();
 

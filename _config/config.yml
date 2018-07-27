@@ -6,3 +6,5 @@ Page:
     - 'SilverstripeUniads\Extension\UniadsPageExtension'
 SilverstripeUniads\Model\UniadsImpression:
   store_user_agent: true
+SilverstripeUniads\Jobs\UniAdsReportJob:
+  interval: 24
