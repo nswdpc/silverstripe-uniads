@@ -1,7 +1,7 @@
 ---
-Name: uniads
+Name: uniads_routes
 After: framework/routes#coreroutes
 ---
-Director:
+Silverstripe\Control\Director:
   rules:
-    'uniads-click//$Action/$ID' : 'UniadsController'
+    'uniads-click//$Action/$ID' : 'SilverstripeUniads\Controller\UniadsController'

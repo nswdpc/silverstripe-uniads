@@ -1,17 +1,26 @@
 {
-	"name": "unisolutions/silverstripe-uniads",
-	"type": "silverstripe-module",
-	"description": "A simple module to manage advertisements on pages for Silverstripe.",
-	"keywords": ["silverstripe", "ads", "advertisement", "banner", "banners", "admanager", "manager", "management"],
-	"authors": [{
-		"name": "Elvinas Liutkevičius",
-		"email": "elvinas@unisolutions.eu"
-	}],
-	"require": {
-		"silverstripe/cms": "3.*"
-	},
-	"minimum-stability": "dev",
-	"extra": {
-		"installer-name": "uniads"
-	}
+    "name": "unisolutions/silverstripe-uniads",
+    "type": "silverstripe-verndormodule",
+    "description": "A simple module to manage advertisements on pages for Silverstripe.",
+    "keywords": [
+        "silverstripe", "ads", "advertisement", "banner", "banners", "admanager", "manager", "management"
+    ],
+    "authors": [
+        {
+            "name": "Elvinas Liutkevičius",
+            "email": "elvinas@unisolutions.eu"
+        },
+        {
+            "name": "James Ellis",
+            "email": "james.ellis@dpc.nsw.gov.au"
+        }
+    ],
+    "require": {
+        "silverstripe/cms": "~4.0",
+        "symbiote/silverstripe-gridfieldextensions": "^3"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "installer-name": "uniads"
+    }
 }

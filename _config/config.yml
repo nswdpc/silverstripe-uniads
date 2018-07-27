@@ -1,7 +1,8 @@
 ---
-Name: uniads
-After: 'framework/*','cms/*'
+Name: uniads_config
 ---
 Page:
   extensions:
-    - 'UniadsExtension'
+    - 'SilverstripeUniads\Extension\UniadsPageExtension'
+SilverstripeUniads\Model\UniadsImpression:
+  store_user_agent: true
