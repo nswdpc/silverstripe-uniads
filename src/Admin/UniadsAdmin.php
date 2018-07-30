@@ -38,7 +38,8 @@ class UniadsAdmin extends ModelAdmin {
     ];
 
     private static $allowed_actions = [
-        'preview'
+        'preview',
+        'random'
     ];
 
     private static $url_rule = '/$ModelClass/$Action/$ID/$OtherID';
@@ -91,6 +92,40 @@ class UniadsAdmin extends ModelAdmin {
         $ad = UniadsObject::get()->byID($ad_id);
 
         $member = Member::currentUser();
+        if (!$ad || !$ad->canView($member)) {
+            Controller::curr()->httpError(404);
+            return;
+        }
+
+        // No impression and click tracking for previews
+        $conf = UniadsObject::config();
+        $conf->use_js_tracking = false;
+        $conf->record_impressions = false;
+        $conf->record_impressions_stats = false;
+
+        // Block stylesheets and JS that are not required (using our own template)
+        Requirements::clear();
+
+        return $ad->renderWith('UniadsPreview');
+    }
+
+    /**
+     * Test method for random ad
+     */
+    public function random(HTTPRequest $request) {
+        $zone_id = $request->getVar('id');
+        if(!$zone_id) {
+            Controller::curr()->httpError(404);
+            return;
+        }
+        $member = Member::currentUser();
+        $zone = UniadsZone::get()->filter('ID',  $zone_id)->first();
+        if (!$zone || !$zone->canView($member)) {
+            Controller::curr()->httpError(404);
+            return;
+        }
+
+        $ad = $zone->GetRandomAd();
         if (!$ad || !$ad->canView($member)) {
             Controller::curr()->httpError(404);
             return;

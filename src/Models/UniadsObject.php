@@ -169,7 +169,7 @@ class UniadsObject extends DataObject {
 
             // @todo this is probably not the best way to concoct an admin link
             $class_name = str_replace("\\", "-", UniadsObject::class);
-            $preview_link = Director::absoluteBaseURL() . 'admin/' . UniadsAdmin::config()->url_segment . '/' . $class_name . '/preview/?ad=' . $this->ID;
+            $preview_link = Director::absoluteBaseURL() . 'admin/' . UniadsAdmin::config()->url_segment . '/' . $class_name . '/preview/?id=' . $this->ID;
 
             $fields->addFieldToTab(
                 'Root.Main',
