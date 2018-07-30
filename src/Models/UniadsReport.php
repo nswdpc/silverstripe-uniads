@@ -1,6 +1,7 @@
 <?php
 namespace SilverstripeUniads\Model;
 use Silverstripe\ORM\DataObject;
+use Silverstripe\Security\Permission;
 
 /**
  * Description of UniadsReport
@@ -55,6 +56,15 @@ class UniadsReport extends DataObject {
     private static $default_sort = ['Created DESC'];
 
     /**
+     * Only admins can delete these report entries
+     * @param Member $member
+     * @return boolean
+     */
+    public function canDelete($member = null)
+    {
+        return Permission::checkMember($member, 'ADMIN');
+    }
+    /**
      * Saves data for active ads from supplied UniAdsObject types
      * @todo is the ad within expiry time and is it's campaign active ?
      * @param array $types
@@ -94,6 +104,17 @@ class UniadsReport extends DataObject {
             }
             $report->sort('Created ASC');
             return $report;
+    }
+
+    /**
+     * CMS Fields
+     * @return FieldList
+     */
+    public function getCMSFields()
+    {
+        $fields = parent::getCMSFields();
+        $fields = $fields->makeReadonly();
+        return $fields;
     }
 
 
