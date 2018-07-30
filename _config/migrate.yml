@@ -1,0 +1,13 @@
+---
+Name: uniads_migrate
+---
+SilverStripe\ORM\DatabaseAdmin:
+  classname_value_remapping:
+    UniadsCampaign: 'SilverstripeUniads\Model\UniadsCampaign'
+    UniadsClick: 'SilverstripeUniads\Model\UniadsClick'
+    UniadsClient: 'SilverstripeUniads\Model\UniadsClient'
+    UniadsImpression: 'SilverstripeUniads\Model\UniadsImpression'
+    UniadsObject: 'SilverstripeUniads\Model\UniadsObject'
+    UniadsReport: 'SilverstripeUniads\Model\UniadsReport'
+    UniAdsReport: 'SilverstripeUniads\Model\UniadsReport'
+    UniadsZone: 'SilverstripeUniads\Model\UniadsZone'
