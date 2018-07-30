@@ -5,6 +5,7 @@ use SilverstripeUniads\Model\UniadsCampaign;
 use SilverstripeUniads\Model\UniadsClient;
 use SilverstripeUniads\Model\UniadsZone;
 use SilverstripeUniads\Model\UniadsReport;
+use Silverstripe\Security\Member;
 use Silverstripe\Control\Director;
 use Silverstripe\Control\Controller;
 use Silverstripe\Control\HTTPRequest;
@@ -82,11 +83,15 @@ class UniadsAdmin extends ModelAdmin {
     /** Preview an advertisement.
      */
     public function preview(HTTPRequest $request) {
-        $request->shift();
-        $adID = (int) $request->param('ID');
-        $ad = UniadsObject::get()->byID($adID);
+        $ad_id = $request->getVar('id');
+        if(!$ad_id) {
+            Controller::curr()->httpError(404);
+            return;
+        }
+        $ad = UniadsObject::get()->byID($ad_id);
 
-        if (!$ad) {
+        $member = Member::currentUser();
+        if (!$ad || !$ad->canView($member)) {
             Controller::curr()->httpError(404);
             return;
         }
@@ -100,9 +105,7 @@ class UniadsAdmin extends ModelAdmin {
         // Block stylesheets and JS that are not required (using our own template)
         Requirements::clear();
 
-        $template = new SSViewer('UniadsPreview');
-
-        return $template->Process($ad);
+        return $ad->renderWith('UniadsPreview');
     }
 
 }

@@ -1,11 +1,11 @@
 <% if $Zone %>
-	<div style="<% if $Zone.getWidth %>width:$Zone.getWidth;<% end_if %><% if $Zone.getHeight %>height:$Zone.getHeight;<% end_if %>margin:0 auto;padding:0;overflow:hidden;">
-	<% if not $ExternalAd %>
-		<a href="$Link"<% if $UseJsTracking %> data-adid="$ID"<% end_if %><% if $NewWindow %> target=\"_blank\"<% end_if %>>
-			$getContent
-		</a>
-	<% else %>
-		$getContent
-	<% end_if %>
-	</div>
+<div style="width:{$Zone.Width};height:{$Zone.Height};margin:0 auto;padding:0;overflow:hidden;">
+<% end_if %>
+<% if not $ExternalAd %>
+    <a href="$Link"<% if $UseJsTracking %> data-adid="$ID"<% end_if %><% if $NewWindow %> target="_blank"<% end_if %>>$Content</a>
+<% else %>
+    $Content
+<% end_if %>
+<% if $Zone %>
+</div>
 <% end_if %>

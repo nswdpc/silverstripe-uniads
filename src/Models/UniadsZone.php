@@ -44,8 +44,10 @@ class UniadsZone extends DataObject {
 
     private static $summary_fields = [
         'ID' => '#',
-        'ParentZone.Title',
         'Title',
+        'ParentZone.Title',
+        'ZoneWidth',
+        'ZoneHeight',
         'Active',
     ];
 

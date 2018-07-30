@@ -34,7 +34,6 @@ class UniadsController extends Controller {
     }
 
     private function GetAdAndLogClick($id) {
-        $id = (int) $id;
         if ($id) {
             $ad = UniadsObject::get()->byID($id);
             if ($ad && $ad->exists()) {
@@ -44,7 +43,7 @@ class UniadsController extends Controller {
                     $ad->write();
                 }
                 if ($conf->record_clicks_stats) {
-                    $clk = new UniadsClick;
+                    $clk = UniadsClick::create();
                     $clk->AdID = $ad->ID;
                     $clk->write();
                 }

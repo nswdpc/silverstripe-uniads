@@ -30,6 +30,8 @@ use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use DateTime;
 use Page;
 
@@ -145,10 +147,7 @@ class UniadsObject extends DataObject {
             , new TextField('Title', _t('UniadsObject.db_Title', 'Title'))
         )));
 
-        if ($this->ID) {
-            // @todo this is probably not the best way to concoct an admin link
-            $class_name = str_replace("\\", "-", UniadsObject::class);
-            $previewLink = Director::absoluteBaseURL() . 'admin/' . UniadsAdmin::config()->url_segment . '/' . $class_name . '/preview/' . $this->ID;
+        if ($this->exists()) {
 
             $fields->addFieldToTab('Root.Main', new ReadonlyField('Impressions', _t('UniadsObject.db_Impressions', 'Impressions')), 'Title');
             $fields->addFieldToTab('Root.Main', new ReadonlyField('Clicks', _t('UniadsObject.db_Clicks', 'Clicks')), 'Title');
@@ -166,8 +165,20 @@ class UniadsObject extends DataObject {
                 $expires = new DateField('Expires', _t('UniadsObject.db_Expires', 'Expires')),
                 new NumericField('ImpressionLimit', _t('UniadsObject.db_ImpressionLimit', 'Impression Limit')),
                 new CheckboxField('Active', _t('UniadsObject.db_Active', 'Active')),
-                new LiteralField('Preview', '<a href="'.$previewLink.'" target="_blank">' . _t('UniadsObject.Preview', 'Preview this advertisement') . "</a>"),
             ));
+
+            // @todo this is probably not the best way to concoct an admin link
+            $class_name = str_replace("\\", "-", UniadsObject::class);
+            $preview_link = Director::absoluteBaseURL() . 'admin/' . UniadsAdmin::config()->url_segment . '/' . $class_name . '/preview/?ad=' . $this->ID;
+
+            $fields->addFieldToTab(
+                'Root.Main',
+                LiteralField::create(
+                    'Preview',
+                    "<a href=\"{$preview_link}\" target=\"_blank\">" . _t('UniadsObject.Preview', 'Preview this advertisement') . "</a>"
+                ),
+                'Title'
+            );
 
             $app_categories = File::config()->app_categories;
             $file->setFolderName($this->config()->files_dir);
@@ -203,7 +214,8 @@ class UniadsObject extends DataObject {
     }
 
 
-    /** Returns true if this is an "external" advertisment (e.g., one from Google AdSense).
+    /**
+     * Returns true if this is an "external" advertisment (e.g., one from Google AdSense).
      * "External" advertisements have no target URL or page.
      */
     public function ExternalAd() {
@@ -220,8 +232,7 @@ class UniadsObject extends DataObject {
     }
 
     public function forTemplate() {
-        $template = new SSViewer('UniadsObject');
-        return $template->process($this);
+        return $this->renderWith('UniadsObject');
     }
 
     public function UseJsTracking() {
@@ -252,32 +263,54 @@ class UniadsObject extends DataObject {
     }
 
     public function getContent() {
-        $file = $this->getComponent('File');
-        $zone = $this->getComponent('Zone');
-        if ($file) {
+        $file = $this->File();
+        if (!empty($file->ID)) {
             if ($file->appCategory() == 'flash') {
-                $src = $this->getTarget() ? HTTP::setGetVar('clickTAG', $this->TrackingLink(true), $file->Filename) : $file->Filename;
-                return '
-                    <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="'.$zone->Width.'" height="'.$zone->Height.'" style="display:block;">
-                        <param name="movie" value="'.$src.'" />
-                        <param name="quality" value="high" />
-                        <param name="wmode" value="transparent" />
-                        <embed
-                            src="'.$src.'"
-                            quality="high"
-                            wmode="transparent"
-                            width="'.$zone->Width.'"
-                            height="'.$zone->Height.'"
-                            type="application/x-shockwave-flash"
-                            pluginspage="http://www.macromedia.com/go/getflashplayer">
-                        </embed>
-                    </object>
-                ';
+                $html = $this->getFlashContent();
             } else if ($file->appCategory() == 'image') {
-                return '<img src="'.$file->URL.'" style="width:100%;display:block;" alt="'.$file->Title.'" />';
+                $src = htmlspecialchars($file->getAbsoluteURL());
+                $alt = htmlspecialchars($file->Title);
+                $html = <<<HTML
+<img src="{$src}" style="width:100%;display:block;" alt="{$alt}">
+HTML;
+            } else {
+                $html = "";
             }
+            return DBField::create_field(DBHTMLText::class, $html);
+        } else {
+            return $this->AdContent;
         }
-        return $this->AdContent;
+    }
+
+    private function getFlashContent() {
+        if(!$this->config()->allow_flash) {
+            return "";
+        }
+        $zone = $this->Zone();
+        if(empty($zone->ID)) {
+            return "";
+        }
+        $src = $this->getTarget() ? HTTP::setGetVar('clickTAG', $this->TrackingLink(true), $file->Filename) : $file->Filename;
+        $html = <<<HTML
+<object
+classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+width="{$zone->Width}" height="{$zone->Height}"
+style="display:block;">
+    <param name="movie" value="{$src}">
+    <param name="quality" value="high">
+    <param name="wmode" value="transparent">
+    <embed
+        src="{$src}"
+        quality="high"
+        wmode="transparent"
+        width="{$zone->Width}"
+        height="{$zone->Height}"
+        type="application/x-shockwave-flash"
+        pluginspage="http://www.macromedia.com/go/getflashplayer">
+    </embed>
+</object>
+HTML;
+        return $html;
     }
 
 }
