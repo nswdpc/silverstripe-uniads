@@ -52,8 +52,8 @@ class UniadsCampaign extends DataObject {
     ];
 
     private static $indexes = [
-        'Active' => [ 'type' => 'index', 'value' => 'Active'],
-        'DateLimit' => [ 'type' => 'index', 'value' => '"Starts","Expires"'],
+        'Active' => [ 'type' => 'index', 'columns' => [ 'Active' ] ],
+        'DateLimit' => [ 'type' => 'index', 'columns' => ['Starts','Expires'] ],
     ];
 
     public function getCMSFields() {

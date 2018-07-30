@@ -118,12 +118,12 @@ class UniadsObject extends DataObject {
     ];
 
     private static $indexes = [
-        'Active' => true,
-        'Weight' => true,
-        'ImpressionLimit' => true,
-        'Impressions' => true,
-        'Clicks' => true,
-        'DateLimit' => [ 'type' => 'index', 'value' => '"Starts","Expires"'],
+        'Active' => [ 'type' => 'index', 'columns' => ['Active'] ],
+        'Weight' => [ 'type' => 'index', 'columns' => ['Weight'] ],
+        'ImpressionLimit' => [ 'type' => 'index', 'columns' => ['ImpressionLimit'] ],
+        'Impressions' => [ 'type' => 'index', 'columns' => ['Impressions'] ],
+        'Clicks' => [ 'type' => 'index', 'columns' => ['Clicks'] ],
+        'DateLimit' => [ 'type' => 'index', 'columns' => ['Starts','Expires'] ],
     ];
 
 

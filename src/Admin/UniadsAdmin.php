@@ -4,6 +4,7 @@ use SilverstripeUniads\Model\UniadsObject;
 use SilverstripeUniads\Model\UniadsCampaign;
 use SilverstripeUniads\Model\UniadsClient;
 use SilverstripeUniads\Model\UniadsZone;
+use SilverstripeUniads\Model\UniadsReport;
 use Silverstripe\Control\Director;
 use Silverstripe\Control\Controller;
 use Silverstripe\Control\HTTPRequest;
@@ -29,6 +30,7 @@ class UniadsAdmin extends ModelAdmin {
         UniadsCampaign::class,
         UniadsClient::class,
         UniadsZone::class,
+        UniadsReport::class
     ];
 
     private static $allowed_actions = [

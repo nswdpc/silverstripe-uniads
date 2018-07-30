@@ -13,6 +13,17 @@ class UniadsReport extends DataObject {
 
     private static $table_name = 'UniadsReport';
 
+    /**
+     * Singular name for CMS
+     * @var string
+     */
+    private static $singular_name = 'Report';
+    /**
+     * Plural name for CMS
+     * @var string
+     */
+    private static $plural_name = 'Reports';
+
     const IMPRESSION = 'Impressions';
     const CLICK = 'Clicks';
 
@@ -32,10 +43,16 @@ class UniadsReport extends DataObject {
     );
 
     private static $indexes = array(
-        'Created' => true, // Use Created as the record date/time
-        'Type' => true,
-        'Count' => true,
+        'Created' => [ 'type' => 'index', 'columns' => ['Created'] ],
+        'Type' => [ 'type' => 'index', 'columns' => ['Type'] ],
+        'Count' => [ 'type' => 'index', 'columns' => ['Count'] ],
     );
+
+    /**
+     * Default sort ordering
+     * @var array
+     */
+    private static $default_sort = ['Created DESC'];
 
     /**
      * Saves data for active ads from supplied UniAdsObject types

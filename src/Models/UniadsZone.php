@@ -60,7 +60,7 @@ class UniadsZone extends DataObject {
     ];
 
     private static $indexes = [
-        'Title' => true,
+        'Title' => [ 'type' => 'index', 'columns' => ['Title'] ],
     ];
 
     private static $defaults = [

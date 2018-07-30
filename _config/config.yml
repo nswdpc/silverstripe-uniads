@@ -4,6 +4,14 @@ Name: uniads_config
 Page:
   extensions:
     - 'SilverstripeUniads\Extension\UniadsPageExtension'
+SilverstripeUniads\Model\UniadsObject:
+  use_js_tracking: true
+  record_impressions: true
+  record_impressions_stats: false
+  record_clicks: true
+  record_clicks_stats: true
+  files_dir: 'UploadedAds'
+  max_file_size: 2097152
 SilverstripeUniads\Model\UniadsImpression:
   store_user_agent: true
 SilverstripeUniads\Jobs\UniAdsReportJob:
