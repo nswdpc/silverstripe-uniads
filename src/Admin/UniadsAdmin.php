@@ -14,6 +14,9 @@ use Silverstripe\View\Requirements;
 use Silverstripe\View\SSViewer;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use Silverstripe\Core\Config\Config;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldImportButton;
 
 /**
  * Description of UniadsAdmin
@@ -57,15 +60,24 @@ class UniadsAdmin extends ModelAdmin {
     {
         $form = parent::getEditForm($id, $fields);
         $fields = $form->Fields();
-        switch($this->modelClass) {
-            case UniadsZone::class:
-                $field_name = $this->sanitiseClassName( UniadsZone::class );
-                $gf = $fields->dataFieldByName( $field_name );
-                $config = $gf->getConfig();
-                $config->addComponent( GridFieldOrderableRows::create('Order') );
-                $list = $this->getList();
-                $list = $list->where('ParentZoneID = 0 OR ParentZoneID IS NULL');
-                break;
+        // GridField config mogrification
+
+        $field_name = $this->sanitiseClassName( $this->modelClass );
+        $gf = $fields->dataFieldByName( $field_name );
+        //var_dump($gf);
+        if($gf) {
+            $config = $gf->getConfig();
+            switch($this->modelClass) {
+                case UniadsZone::class:
+                    $config->addComponent( GridFieldOrderableRows::create('Order') );
+                    $list = $this->getList();
+                    $list = $list->where('ParentZoneID = 0 OR ParentZoneID IS NULL');
+                    break;
+                case UniadsReport::class:
+                    $config->removeComponentsByType( GridFieldAddNewButton::class );
+                    $config->removeComponentsByType( GridFieldImportButton::class );
+                    break;
+            }
         }
         return $form;
     }
