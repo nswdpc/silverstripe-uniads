@@ -14,7 +14,7 @@ use Silverstripe\Forms\GridField\GridField;
 use Silverstripe\Forms\GridField\GridFieldConfig_RelationEditor;
 
 /**
- * Description of UniadsExtension
+ * Description of UniadsPageExtension
  *
  * @author Elvinas Liutkevičius <elvinas@unisolutions.eu>
  * @author Hans de Ruiter <hans@hdrlab.org.nz>
