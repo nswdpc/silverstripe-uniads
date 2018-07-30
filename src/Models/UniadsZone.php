@@ -46,7 +46,6 @@ class UniadsZone extends DataObject {
         'ID' => '#',
         'ParentZone.Title',
         'Title',
-        'Order',
         'Active',
     ];
 

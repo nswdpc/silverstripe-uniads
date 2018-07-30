@@ -64,7 +64,6 @@ class UniadsAdmin extends ModelAdmin {
 
         $field_name = $this->sanitiseClassName( $this->modelClass );
         $gf = $fields->dataFieldByName( $field_name );
-        //var_dump($gf);
         if($gf) {
             $config = $gf->getConfig();
             switch($this->modelClass) {
@@ -72,6 +71,7 @@ class UniadsAdmin extends ModelAdmin {
                     $config->addComponent( GridFieldOrderableRows::create('Order') );
                     $list = $this->getList();
                     $list = $list->where('ParentZoneID = 0 OR ParentZoneID IS NULL');
+                    $gf->setList($list);
                     break;
                 case UniadsReport::class:
                     $config->removeComponentsByType( GridFieldAddNewButton::class );
