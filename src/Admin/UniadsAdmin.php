@@ -69,9 +69,6 @@ class UniadsAdmin extends ModelAdmin {
             switch($this->modelClass) {
                 case UniadsZone::class:
                     $config->addComponent( GridFieldOrderableRows::create('Order') );
-                    $list = $this->getList();
-                    $list = $list->where('ParentZoneID = 0 OR ParentZoneID IS NULL');
-                    $gf->setList($list);
                     break;
                 case UniadsReport::class:
                     $config->removeComponentsByType( GridFieldAddNewButton::class );
