@@ -8,6 +8,7 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Director;
 use SilverstripeUniads\Admin\UniadsAdmin;
 use Silverstripe\Forms\LiteralField;
+use Silverstripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 
 
 /**
@@ -99,20 +100,36 @@ class UniadsZone extends DataObject {
     public function getCMSFields() {
         $fields = parent::getCMSFields();
 
-        if (!$this->ParentZoneID) {
-            $fields->removeByName('Order');
+        // no need to have order editing
+        $fields->removeByName('Order');
+
+        // if the zone has a parent, remove ability to create children, it's only two level zoning
+        if($this->ParentZone()->exists()) {
+            $fields->removeByName('ChildZones');
         }
 
+        // If the zone has children, no parent zone can be selected
         if ($this->ChildZones()->Count() > 0) {
             $fields->removeByName('ParentZoneID');
         }
 
+        // zone selection - can only select top level AND not self
         if (($field = $fields->dataFieldByName('ParentZoneID'))) {
             $field->setSource(
                 UniadsZone::get()
                 ->where("ID != '" . Convert::raw2sql($this->ID) . "' AND (ParentZoneID IS NULL OR ParentZoneID = 0)")
                 ->map()->toArray()
             );
+            $field->setDescription(
+                _t('UniadsZone.ParentZoneSelection',
+                'Select a parent for this zone, or leave unselected to set this zone as a top level zone.<br />When a zone is displayed, all active ads within its child zones will display.')
+            );
+        }
+
+        $cz = $fields->dataFieldByName('ChildZones');
+        if($cz) {
+            $config = $cz->getConfig();
+            $config->removeComponentsByType( GridFieldAddExistingAutocompleter::class );
         }
 
         if($this->exists()) {
