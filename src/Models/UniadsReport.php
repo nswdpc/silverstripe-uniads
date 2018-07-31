@@ -2,6 +2,8 @@
 namespace SilverstripeUniads\Model;
 use Silverstripe\ORM\DataObject;
 use Silverstripe\Security\Permission;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBDateTime;
 
 /**
  * Description of UniadsReport
@@ -39,7 +41,7 @@ class UniadsReport extends DataObject {
 
     private static $summary_fields = array(
         'Type' => 'Type',
-        'Created' => 'Created',
+        'Created.Nice' => 'Created',
         'Count' => 'Count',
     );
 
@@ -54,6 +56,21 @@ class UniadsReport extends DataObject {
      * @var array
      */
     private static $default_sort = ['Created DESC'];
+
+    public function getTitle() {
+        if($this->exists()) {
+            $ad = $this->Ad();
+            $created = DBField::create_field( DBDateTime::class, $this->Created );
+            return sprintf(
+                _t('UniadsReport.new_report', '\'%s\' report for ad \'%s\' created \'%s\''),
+                $this->Type,
+                $ad->Title,
+                $created->Nice()
+            );
+        } else {
+            return _t('UniadsObject.new_report', 'New Report');
+        }
+    }
 
     /**
      * Only admins can delete these report entries

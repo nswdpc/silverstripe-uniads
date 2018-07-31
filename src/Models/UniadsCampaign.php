@@ -31,9 +31,9 @@ class UniadsCampaign extends DataObject {
 
     private static $summary_fields = [
         'Title' => 'Title',
-        'Starts' => 'Starts',
-        'Expires' => 'Expires',
-        'Active' => 'Active',
+        'Starts.Nice' => 'Starts',
+        'Expires.Nice' => 'Expires',
+        'Active.Nice' => 'Active',
     ];
 
     private static $searchable_fields = [

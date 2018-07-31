@@ -15,6 +15,7 @@ use Silverstripe\View\Requirements;
 use Silverstripe\View\SSViewer;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use Silverstripe\Core\Config\Config;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldImportButton;
@@ -46,7 +47,7 @@ class UniadsAdmin extends ModelAdmin {
 
     private static $url_segment = 'advrt';
     private static $menu_title = 'Ads';
-    private static $menu_icon = '';
+    private static $menu_icon_class = 'font-icon-block-layout';
 
 
     public function __construct() {
@@ -75,6 +76,10 @@ class UniadsAdmin extends ModelAdmin {
                 case UniadsReport::class:
                     $config->removeComponentsByType( GridFieldAddNewButton::class );
                     $config->removeComponentsByType( GridFieldImportButton::class );
+                    $fields->insertBefore(
+                        $field_name,
+                        LiteralField::create('ReportNote', '<p class="message">' . _t('UniadsReport.all_reports', 'This list displays all reports created. To view a report for a specific ad, navigate to that ad in the admin') . '</p>')
+                    );
                     break;
             }
         }

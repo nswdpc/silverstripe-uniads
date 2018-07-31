@@ -27,6 +27,7 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Control\HTTP;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldSortableHeader;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
@@ -52,8 +53,8 @@ class UniadsObject extends DataObject {
      */
     private static $table_name = 'UniadsObject';
 
-    private static $singular_name = 'Ad Asset';
-    private static $plural_name = 'Ad Assets';
+    private static $singular_name = 'Ad';
+    private static $plural_name = 'Ads';
 
     private static $use_js_tracking = true;
     private static $record_impressions = true;
@@ -201,10 +202,10 @@ class UniadsObject extends DataObject {
                 $config = GridFieldConfig_RecordEditor::create();
                 $list = $this->owner->Reports()->filter('Type', $type)->sort('Created DESC');
                 $name = 'Reports'. $type;
-                $gf = GridField::create($name, $type .  ' - report', $list, $config);
+                $gf = GridField::create($name, sprintf(_t('UniadsReport.TypeReport', '%s report'), $type), $list, $config);
                 $config->removeComponentsByType( GridFieldAddNewButton::class );
                 $config->removeComponentsByType( GridFieldAddExistingAutocompleter::class );
-                $config->addComponent(new GridFieldExportButton());
+                $config->addComponent( new GridFieldExportButton('buttons-before-left') );
                 $fields->addFieldToTab('Root.' . $type . 'Report', $gf);
             }
         }

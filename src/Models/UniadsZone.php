@@ -54,7 +54,7 @@ class UniadsZone extends DataObject {
         'ParentZone.Title',
         'ZoneWidth',
         'ZoneHeight',
-        'Active',
+        'Active.Nice' => 'Active',
     ];
 
     private static $has_one = [
