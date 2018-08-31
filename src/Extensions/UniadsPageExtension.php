@@ -11,6 +11,7 @@ use Silverstripe\Forms\CheckboxField;
 use Silverstripe\Forms\DropdownField;
 use Silverstripe\Forms\GridField\GridField;
 use Silverstripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use Silverstripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 
 /**
  * Description of UniadsPageExtension
@@ -44,7 +45,7 @@ class UniadsPageExtension extends DataExtension {
 
         if (!$this->owner->InheritSettings) {
             $conf = GridFieldConfig_RelationEditor::create();
-            $conf->getComponentByType('GridFieldAddExistingAutocompleter')->setSearchFields(array('Title'));
+            $conf->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields(array('Title'));
             $grid = new GridField("Advertisements", _t('UniadsObject.PLURALNAME', 'Advertisements'), $this->owner->Ads(), $conf);
             $fields->addFieldToTab(
                             "Root.Advertisements",
