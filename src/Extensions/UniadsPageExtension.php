@@ -47,17 +47,16 @@ class UniadsPageExtension extends DataExtension {
             $conf = GridFieldConfig_RelationEditor::create();
             $conf->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields(array('Title'));
             $grid = new GridField("Advertisements", _t('UniadsObject.PLURALNAME', 'Advertisements'), $this->owner->Ads(), $conf);
-            $fields->addFieldToTab(
+            $fields->addFieldsToTab(
                             "Root.Advertisements",
-                            $grid
-            );
-            $fields->addFieldToTab(
-                            'Root.Advertisements',
-                            DropdownField::create(
-                                'UseCampaignID',
-                                _t('UniadsObject.UseCampaign', 'Use Campaign'),
-                                UniadsCampaign::get()->map()->toArray()
-                            )->setEmptyString('')
+                            [
+                                DropdownField::create(
+                                    'UseCampaignID',
+                                    _t('UniadsObject.UseCampaign', 'Use Campaign'),
+                                    UniadsCampaign::get()->map()->toArray()
+                                )->setEmptyString(''),
+                                $grid
+                            ]
             );
         }
     }
