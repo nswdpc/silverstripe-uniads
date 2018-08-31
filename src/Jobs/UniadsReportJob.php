@@ -2,7 +2,8 @@
 namespace SilverstripeUniads\Jobs;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJob;
-use Silverstrip\Config\Config;
+use Symbiote\QueuedJobs\Services\QueuedJobService;
+use Silverstripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverstripeUniads\Model\UniadsReport;
 use Exception;
@@ -63,6 +64,6 @@ class UniAdsReportJob extends AbstractQueuedJob implements QueuedJob {
 		$now  = new DateTime();
 		$now->modify('+ ' . $interval . ' hours');
 		$next_run_datetime = $now->format('Y-m-d H:i:s');
-		singleton('QueuedJobService')->queueJob(new UniAdsReportJob(), $next_run_datetime);
+		singleton( QueuedJobService::class )->queueJob(new UniAdsReportJob(), $next_run_datetime);
 	}
 }
