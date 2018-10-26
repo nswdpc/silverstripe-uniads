@@ -1,5 +1,6 @@
 <?php
 namespace SilverstripeUniads\Model;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Controller;
 use Silverstripe\ORM\DataObject;
@@ -18,6 +19,7 @@ use Silverstripe\Forms\LiteralField;
 use Silverstripe\Forms\TextareaField;
 use Silverstripe\Forms\DateField;
 use Silverstripe\Assets\File;
+use Silverstripe\Assets\Image;
 use Silverstripe\Security\Member;
 use SilverstripeUniads\Admin\UniadsAdmin;
 use Silverstripe\i18n\i18n;
@@ -86,6 +88,14 @@ class UniadsObject extends DataObject {
         'InternalPage' => Page::class,
     ];
 
+    /**
+     * Relationship version ownership
+     * @var array
+     */
+    private static $owns = [
+        'File'
+    ];
+
     private static $belongs_many_many = [
         'AdInPages' => Page::class,
     ];
@@ -111,6 +121,8 @@ class UniadsObject extends DataObject {
     ];
 
     private static $summary_fields = [
+        'ID' => '#',
+        'ImageThumb' => 'File',
         'Title' => 'Title',
         'Starts.Nice' => 'Starts',
         'Expires.Nice' => 'Expires',
@@ -128,6 +140,16 @@ class UniadsObject extends DataObject {
         'Clicks' => [ 'type' => 'index', 'columns' => ['Clicks'] ],
         'DateLimit' => [ 'type' => 'index', 'columns' => ['Starts','Expires'] ],
     ];
+
+    public function ImageThumb() {
+        $file = $this->File();
+        $thumb = null;
+        if($file && $file->appCategory() == "image") {
+            $image = Image::create( $file->toMap() );
+            $thumb = $image->CMSThumbnail();
+        }
+        return $thumb;
+    }
 
 
     public function fieldLabels($includerelations = true) {
