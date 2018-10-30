@@ -271,7 +271,7 @@ class UniadsObject extends DataObject {
             Requirements::javascript(THIRDPARTY_DIR.'/jquery/jquery.js'); // TODO: How about jquery.min.js?
             Requirements::javascript('unisolutions/silverstripe-uniads:javascript/uniads.js');
 
-            $link = Convert::raw2att($this->getTarget());
+            $link = $this->getTarget();
         } else {
             $link = $this->TrackingLink();
         }
