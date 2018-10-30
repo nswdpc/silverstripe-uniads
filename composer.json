@@ -22,6 +22,9 @@
     },
     "minimum-stability": "dev",
     "extra": {
-        "installer-name": "uniads"
+        "installer-name": "uniads",
+        "expose": [
+                "javascript"
+        ]
     }
 }
