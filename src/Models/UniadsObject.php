@@ -113,7 +113,7 @@ class UniadsObject extends DataObject {
         'Active' => 0,
         'NewWindow' => 1,
         'ImpressionLimit' => 0,
-        'Weight' => 1.0,
+        'Weight' => 1.0
     ];
 
     private static $searchable_fields = [
@@ -187,7 +187,7 @@ class UniadsObject extends DataObject {
                 $starts = new DateField('Starts', _t('UniadsObject.db_Starts', 'Starts')),
                 $expires = new DateField('Expires', _t('UniadsObject.db_Expires', 'Expires')),
                 new NumericField('ImpressionLimit', _t('UniadsObject.db_ImpressionLimit', 'Impression Limit')),
-                new CheckboxField('Active', _t('UniadsObject.db_Active', 'Active')),
+                new CheckboxField('Active', _t('UniadsObject.db_Active', 'Active'))
             ));
 
             // @todo this is probably not the best way to concoct an admin link
@@ -266,9 +266,21 @@ class UniadsObject extends DataObject {
         return Controller::join_links($absolute ? Director::absoluteBaseURL() : Director::baseURL(), 'uniads-click/go/'.$this->ID);
     }
 
+    public function Requirements() {
+        $jquery_url = $this->config()->get('jquery_url');
+        if($jquery_url) {
+            Requirements::javascript($jquery_url);
+        }
+    }
+
+    /**
+     * Note: This will load the configured jQuery inline within the page
+     * If using your own jQuery, block jquery_url using Requirements within your Page class
+     * Iframe loading will not be affected by this blocking
+     */
     public function Link() {
         if ($this->UseJsTracking()) {
-            Requirements::javascript(THIRDPARTY_DIR.'/jquery/jquery.js'); // TODO: How about jquery.min.js?
+            $this->Requirements();
             Requirements::javascript('unisolutions/silverstripe-uniads:javascript/uniads.js');
 
             $link = $this->getTarget();
@@ -334,6 +346,22 @@ style="display:block;">
 </object>
 HTML;
         return $html;
+    }
+
+    /**
+     * Record an impression on this ad
+     */
+    public function RecordImpression() {
+        $conf = UniadsObject::config();
+        if ($conf->record_impressions) {
+            $this->Impressions++;
+            $this->write();
+        }
+        if ($conf->record_impressions_stats) {
+            $imp = UniadsImpression::create;
+            $imp->AdID = $this->ID;
+            $imp->write();
+        }
     }
 
 }

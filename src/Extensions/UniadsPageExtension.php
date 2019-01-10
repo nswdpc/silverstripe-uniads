@@ -83,26 +83,27 @@ class UniadsPageExtension extends DataExtension {
             return null;
         }
 
-        // get ad from the Zone
-        $ad = $zone->GetRandomAd($this->owner);
-        if($ad) {
-            // now we can log impression
-            $conf = UniadsObject::config();
-            if ($conf->record_impressions) {
-                $ad->Impressions++;
-                $ad->write();
-            }
-            if ($conf->record_impressions_stats) {
-                $imp = UniadsImpression::create;
-                $imp->AdID = $ad->ID;
-                $imp->write();
-            }
+        if($zone->ViewInIframe == 1) {
+            // the Zone renders with an Iframe tag
+            $iframe_link = $zone->IframeLink( $this->owner );
+            $output = $zone->customise(['IframeLink' => $iframe_link])->renderWith('UniadsIframe');
         } else {
-            // Show an empty advert
-            $ad = UniadsObject::create();
-        }
+            // the zone renders inline
 
-        $output = $ad->forTemplate();
+            // get ad from the Zone
+            $ad = $zone->GetRandomAd($this->owner);
+            if($ad) {
+                // now we can log impression
+                $ad->RecordImpression();
+            } else {
+                // Show an empty advert
+                $ad = UniadsObject::create();
+            }
+
+            // if there is an Ad and Iframe is selected
+            $output = $ad->forTemplate();
+
+        }
 
         // process immediate child zones
         if ($zone) {

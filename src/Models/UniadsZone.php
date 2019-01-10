@@ -8,7 +8,9 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Director;
 use SilverstripeUniads\Admin\UniadsAdmin;
 use Silverstripe\Forms\LiteralField;
+use Silverstripe\Forms\CheckboxField;
 use Silverstripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Control\Controller;
 
 
 /**
@@ -36,6 +38,7 @@ class UniadsZone extends DataObject {
         'ZoneHeight' => 'Varchar(6)',
         'Order' => 'Int',
         'Active' => 'Boolean',
+        'ViewInIframe' => 'Boolean'
     ];
 
     /**
@@ -55,6 +58,7 @@ class UniadsZone extends DataObject {
         'ParentZone.Title',
         'ZoneWidth',
         'ZoneHeight',
+        'ViewInIframe.Nice' => 'Iframe?',
         'Active.Nice' => 'Active',
     ];
 
@@ -147,7 +151,30 @@ class UniadsZone extends DataObject {
             );
         }
 
+
+        $fields->addFieldToTab(
+                    'Root.Main',
+                    CheckboxField::create('ViewInIframe', _t('UniadsObject.db_ViewInIframe', 'View In Iframe'))
+                        ->setDescription( _t('UniadsZone.LoadInIframe', 'Load the ad to display in an iframe') )
+        );
+
         return $fields;
+    }
+
+    /**
+     * Return src for showing ad in iframe
+     */
+    public function IframeLink(SiteTree $page = null) {
+        $display_path = 'dsp/ad/?p=' . ($page ? $page->ID : '') . '&z=' . $this->ID;
+        return Controller::join_links(Director::baseURL(), $display_path);
+    }
+
+    public function IframeHeight() {
+        return (int)$this->Height;
+    }
+
+    public function IframeWidth() {
+        return (int)$this->Width;
     }
 
     /**
@@ -217,7 +244,7 @@ class UniadsZone extends DataObject {
             $limit = 1
         );
         singleton( UniadsObject::class )->extend('augmentSQL', $sqlQuery);
-        //echo nl2br($sqlQuery->sql()) . "\n";
+        // echo nl2br($sqlQuery->sql()) . "\n";
         $result = $sqlQuery->execute();
 
         $ad = null;
@@ -227,6 +254,7 @@ class UniadsZone extends DataObject {
                 $ad = UniadsObject::get()->byID($row['ID']);
             }
         }
+        // var_dump($ad ? $ad->ID : 'nada');exit;
         return $ad;
 
     }
