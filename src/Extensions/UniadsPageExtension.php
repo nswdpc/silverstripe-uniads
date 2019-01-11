@@ -2,6 +2,7 @@
 namespace SilverstripeUniads\Extension;
 use Silverstripe\ORM\DataExtension;
 use Silverstripe\ORM\DataList;
+use SilverStripe\ORM\ArrayList;
 use SilverstripeUniads\Model\UniadsObject;
 use SilverstripeUniads\Model\UniadsZone;
 use SilverstripeUniads\Model\UniadsCampaign;
@@ -23,6 +24,8 @@ use Silverstripe\Forms\GridField\GridFieldAddExistingAutocompleter;
  * @license BSD http://silverstripe.org/BSD-license
  */
 class UniadsPageExtension extends DataExtension {
+
+    private $ads;
 
     private static $db = [
         'InheritSettings' => 'Boolean',
@@ -66,7 +69,7 @@ class UniadsPageExtension extends DataExtension {
      *
      * @param mixed $zone either a string zone name or a {@link UniadsZone}
      */
-    public function DisplayAd($zone) {
+    private function DisplayAd($zone, $process_children = true) {
         $ad = null;
 
         if (is_scalar($zone)) {
@@ -100,23 +103,39 @@ class UniadsPageExtension extends DataExtension {
                 $ad = UniadsObject::create();
             }
 
-            // if there is an Ad and Iframe is selected
+            // if there is an Ad
             $output = $ad->forTemplate();
 
         }
 
+        // push the found template onto the list
+        if($output) {
+            $this->ads->push($output);
+        }
+
         // process immediate child zones
         if ($zone) {
-            $children = $zone->ChildZones()
+            $child_zones = $zone->ChildZones()
                             ->filter('Active', 1)
                             ->exclude('ID', $zone->ID) // exclude possibility of zone being parent of itself
                             ->sort('Order ASC');
-            foreach ($children as $child) {
-                $output .= $this->DisplayAd($child);
+            // display ads from child zones
+            foreach ($child_zones as $child_zone) {
+                $this->DisplayAd($child_zone, $process_children);
             }
         }
+    }
 
-        return $output;
+    /**
+     * Displays ads in zone
+     * @param string $zone
+     * @param boolean $process_children
+     * @returns ArrayList
+     */
+    public function DisplayAds($zone, $process_children = true) {
+        $this->ads = new ArrayList();
+        $this->DisplayAd($zone, $process_children);
+        return $this->ads;
     }
 
 }
