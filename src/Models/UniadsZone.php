@@ -87,12 +87,22 @@ class UniadsZone extends DataObject {
 
     private static $default_sort = ' IF(ParentZoneID IS NULL OR ParentZoneID = 0, 1, 0) DESC, Order ASC, ID ASC';
 
+    /**
+     * Returns the Zone width, if the ZoneWidth is numeric we assume px unit
+     * This allows someone to add e.g 100% as the unit
+     * @returns string
+     */
     public function getWidth(){
-        return $this->ZoneWidth . (ctype_digit($this->ZoneWidth) ? 'px' : '');
+        return $this->ZoneWidth . (is_numeric($this->ZoneWidth) ? 'px' : '');
     }
 
+    /**
+     * Returns the Zone height, if the ZoneHeight is numeric we assume px unit
+     * This allows someone to add e.g 100% as the unit
+     * @returns string
+     */
     public function getHeight(){
-        return $this->ZoneHeight . (ctype_digit($this->ZoneHeight) ? 'px' : '');
+        return $this->ZoneHeight . (is_numeric($this->ZoneHeight) ? 'px' : '');
     }
 
     public function fieldLabels($includerelations = true) {
@@ -170,11 +180,11 @@ class UniadsZone extends DataObject {
     }
 
     public function IframeHeight() {
-        return (int)$this->Height;
+        return $this->Height;
     }
 
     public function IframeWidth() {
-        return (int)$this->Width;
+        return $this->Width;
     }
 
     /**
