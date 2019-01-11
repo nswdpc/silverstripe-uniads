@@ -269,7 +269,6 @@ class UniadsZone extends DataObject {
                 $ad = UniadsObject::get()->byID($row['ID']);
             }
         }
-        // var_dump($ad ? $ad->ID : 'nada');exit;
         return $ad;
 
     }
