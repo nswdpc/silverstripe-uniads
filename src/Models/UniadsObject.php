@@ -74,7 +74,7 @@ class UniadsObject extends DataObject {
         'Active' => 'Boolean',
         'TargetURL' => 'Varchar(255)',
         'NewWindow' => 'Boolean',
-        'AdContent' => 'HTMLText',
+        'AdContent' => 'Text',
         'ImpressionLimit' => 'Int',
         'Weight' => 'Double',
         'Impressions' => 'Int',
@@ -254,6 +254,9 @@ class UniadsObject extends DataObject {
         return false;
     }
 
+    /**
+     * Returns the Ad object in a template as a string
+     */
     public function forTemplate() {
         return $this->renderWith('UniadsObject');
     }
@@ -299,6 +302,7 @@ class UniadsObject extends DataObject {
 
     public function getContent() {
         $file = $this->File();
+        $html = "";
         if (!empty($file->ID)) {
             if ($file->appCategory() == 'flash') {
                 $html = $this->getFlashContent();
@@ -311,10 +315,10 @@ HTML;
             } else {
                 $html = "";
             }
-            return DBField::create_field(DBHTMLText::class, $html);
         } else {
-            return $this->AdContent;
+            $html = $this->AdContent;
         }
+        return DBField::create_field(DBHTMLText::class, $html);
     }
 
     private function getFlashContent() {
