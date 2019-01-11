@@ -38,7 +38,8 @@ class UniadsZone extends DataObject {
         'ZoneHeight' => 'Varchar(6)',
         'Order' => 'Int',
         'Active' => 'Boolean',
-        'ViewInIframe' => 'Boolean'
+        'ViewInIframe' => 'Boolean',
+        'RandomiseIframeLink' => 'Boolean'
     ];
 
     /**
@@ -78,6 +79,8 @@ class UniadsZone extends DataObject {
     private static $defaults = [
         'ParentZoneID' => 0,
         'Active' => 1,
+        'ViewInIframe' => 0,
+        'RandomiseIframeLink' => 0
     ];
 
     private static $default_records = array(
@@ -162,11 +165,13 @@ class UniadsZone extends DataObject {
         }
 
 
-        $fields->addFieldToTab(
-                    'Root.Main',
+        $fields->addFieldsToTab(
+                    'Root.Main', [
                     CheckboxField::create('ViewInIframe', _t('UniadsObject.db_ViewInIframe', 'View In Iframe'))
-                        ->setDescription( _t('UniadsZone.LoadInIframe', 'Load the ad to display in an iframe') )
-        );
+                        ->setDescription( _t('UniadsZone.LoadInIframe', 'Load the ad to display in an iframe') ),
+                    CheckboxField::create('RandomiseIframeLink', _t('UniadsObject.db_RandomiseIframeLink', 'Add a random value to the iframe link'))
+                        ->setDescription( _t('UniadsZone.db_RandomiseIframeLinkNote', 'Can assist with caching') )
+        ]);
 
         return $fields;
     }
