@@ -193,6 +193,14 @@ class UniadsZone extends DataObject {
     }
 
     /**
+     * Provide a configurable attribute for the iframe to enable lazy loading by the implementing website
+     * If none is found, then "src" will be used
+     */
+    public function LazyLoadAttribute() {
+        return $this->config()->get('lazy_load_attribute');
+    }
+
+    /**
      * Get a random ad from this zone. Room for improvement, here.
      * @param SiteTree $page
      */

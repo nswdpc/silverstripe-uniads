@@ -1,1 +1,1 @@
-<iframe data-src="$IframeLink" onload="if(this.dataset.src){this.src=this.dataset.src<% if $RandomiseIframeLink %> + '&if=' + Math.random()<% end_if %>;this.dataset.src='';}" width="$IframeWidth" height="$IframeHeight" style="border:none;display:block;"></iframe>
+<iframe <% if $LazyLoadAttribute %>$LazyLoadAttribute<% else %>src<% end_if %>="$IframeLink" width="$IframeWidth" height="$IframeHeight" style="border:none;display:block;"></iframe>
